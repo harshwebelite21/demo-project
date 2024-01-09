@@ -1,0 +1,16 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "na",
+  "main": "na",
+  "scripts": {
+    "test": "na",
+    "start": "nodemon app.js"
+  },
+  "author": "harsh",
+  "license": "ISC",
+  "dependencies": {
+    "express.js": "^1.0.0",
+    "nodemon": "^3.0.2"
+  }
+}
