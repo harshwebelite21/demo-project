@@ -2,19 +2,11 @@ const model = require('../models/user');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-
 //  Add new data
 exports.adddata = async (req, res) => {
 
-    const userName = req.body.name;
-    const userEmail = req.body.email;
-    const userAge = req.body.age;
-    const userBdate = req.body.birthdate;
-    const userPassword = req.body.password;
-
-    console.log(".............data is ", req.body.name);
+    const { name: userName, email: userEmail, age: userAge, birthdate: userBdate, password: userPassword } = req.body;
     try {
-        // throw new Error('test error');
         await model.create(
             {
                 name: userName,
@@ -22,7 +14,6 @@ exports.adddata = async (req, res) => {
                 birthdate: userBdate,
                 age: userAge,
                 password: userPassword,
-
             }
         )
         res.status(201).send("Data Added sucessfully");
@@ -38,12 +29,10 @@ exports.adddata = async (req, res) => {
 // View the user data
 
 exports.viewuser = async (req, res) => {
-    console.log(req.body.name);
-    const username = req.body.name;
+    const username = req.params.username;
     try {
         const data = await model.findOne({ name: username }).lean();
-        console.log(data);
-
+        // console.log(data);
         res.send("Hear is My Details : \n   Name : " + data.name + "\n Email :" + data.email + "\n Age : " + data.age + "\n Birthdate : " + data.birthdate).status(201);
 
     } catch (err) {
@@ -54,13 +43,8 @@ exports.viewuser = async (req, res) => {
 // Update the data using id 
 
 exports.updatedata = async (req, res) => {
-
-    const id = req.body.id;
-    const newname = req.body.name;
-    const newemail = req.body.email;
-    const newAge = req.body.age;
-    const newBdate = req.body.birthdate;
-    const newPassword = req.body.password;
+    const username = req.params.username;
+    const { id, name: newname, email: newemail, age: newAge, birthdate: newBdate, password: newPassword } = req.body;
 
     try {
         const data = await model.findByIdAndUpdate(id, {
@@ -76,12 +60,13 @@ exports.updatedata = async (req, res) => {
     }
 }
 
-
 //  Delete data
 
-exports.deletedata = async (res) => {
+exports.deletedata = async (req, res) => {
+    const userId = req.params.userId;
+    console.log(req.params.userId);
     try {
-        const data = await model.findByIdAndDelete('659e23425779ce3065d1b545');
+        const data = await model.findByIdAndDelete(userId);
         res.send("data deleted sucessfully").status(200);;
     } catch (err) {
         res.send(err.message + 'Data Deletion Unsucessufl').status(400);;
