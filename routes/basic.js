@@ -1,8 +1,9 @@
-const controller = require('../controller/controller');
+const bodyParser = require('body-parser');
 const express = require('express');
+
+const controller = require('../controller/controller');
 const app = express();
 const router = express.Router();
-const bodyParser = require('body-parser');
 
 //  Home Page
 router.route('/').get((req, res) => {
@@ -20,12 +21,12 @@ router.route('/update').put((req, res) => {
 });
 
 // Delete Data
-router.route('/delete').delete((req, res) => {
-    controller.deletedata(res);
+router.route('/delete/:userId').delete((req, res) => {
+    controller.deletedata(req,res);
 });
 
 // View Perticular user
-router.route('/viewuser').get((req, res) => {
+router.route('/viewuser/:username').get((req, res) => {
     controller.viewuser(req, res);
 })
 module.exports = router;
