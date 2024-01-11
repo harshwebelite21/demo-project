@@ -1,11 +1,11 @@
 {
-  "name": "demo",
+  "name": "demo-project",
   "version": "1.0.0",
   "description": "na",
   "main": "na",
   "scripts": {
     "test": "na",
-    "start": "nodemon app.js"
+    "start": "nodemon src/app.js"
   },
   "author": "harsh",
   "license": "ISC",

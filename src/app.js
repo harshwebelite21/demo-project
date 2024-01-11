@@ -4,7 +4,7 @@ require('dotenv').config();
 const app = express();
 
 const router = require('./routes/indexRouter');
-const { startServer } = require('./loadDb');
+const { startServer } = require('../config/loadDb');
 
 
 // For use the body parser
@@ -19,7 +19,7 @@ app.use(router);
 startServer()
 
 //  Start server after cheaking connnection
-app.listen(process.env.SERVER_PORT || 3000, () => {
+app.listen(process.env.PORT, () => {
     console.log("server is running on port " + process.env.PORT);
 });
 
