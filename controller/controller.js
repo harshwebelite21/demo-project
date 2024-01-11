@@ -1,29 +1,19 @@
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
-
 const model = require('../models/user');
-
-// Number of rounds For hashing password
-const saltRounds = 10;
 
 //  Add new data
 exports.adddata = async (req, res) => {
 
-    const { name: userName, email: userEmail, age: userAge, birthdate: userBdate, password: password } = req.body;
-    
-    try {
-        // To encrypt Password
-        const hashPassword = await bcrypt.hash(password, saltRounds);
+    const { name: name, email: email, age: age, birthdate: birthdate, password: password } = req.body;
 
+    try {
         // To create New user 
         await model.create(
             {
-                name: userName,
-                email: userEmail,
-                birthdate: userBdate,
-                age: userAge,
-                password: hashPassword,
+                name: name,
+                email: email,
+                birthdate: birthdate,
+                age: age,
+                password: password,
             }
         )
         res.status(201).send("Data Added sucessfully");
@@ -51,17 +41,15 @@ exports.viewuser = async (req, res) => {
 exports.updatedata = async (req, res) => {
     const userId = req.params.userId;
 
-    const { name: newname, email: newemail, age: newAge, birthdate: newBdate, password: password } = req.body;
+    const { name: name, email: email, age: age, birthdate: birthdate, password: password } = req.body;
 
     try {
-        const hashPassword = await bcrypt.hash(password, saltRounds);
-
-        const data = await model.findByIdAndUpdate(userId, {
-            name: newname,
-            email: newemail,
-            birthdate: newBdate,
-            age: newAge,
-            password: hashPassword,
+        await model.findOneAndUpdate({ _id: userId }, {
+            name: name,
+            email: email,
+            birthdate: birthdate,
+            age: age,
+            password: password,
         })
         res.send('Data Updated sucessful').status(201);
     } catch (err) {

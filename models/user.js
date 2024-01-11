@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const schema = mongoose.Schema;
+const saltRounds = 10;
+
 
 const uschema = new schema({
 
@@ -34,8 +37,45 @@ const uschema = new schema({
     password: {
         type: String,
         required: true
+
     }
 });
+// To Encrypt Password while adding new data
+uschema.pre('save', async function (value) {
+    const data = this;
+    console.log(data, " i am hear");
+
+
+    if (!data.isModified('password')) {
+        return value();
+    }
+    try {
+        const hashPassword = await bcrypt.hash(data.password, saltRounds);
+        data.password = hashPassword;
+
+    } catch (err) {
+        return value(err);
+    }
+
+})
+
+// To Encrypt Password after updating password data
+uschema.pre('findOneAndUpdate', async function (value) {
+    const password = this.get("password");
+    // console.log(password);
+    // const data=this;
+    // console.log(data._update.password, "Password data");
+
+    try {
+        const hashPassword = await bcrypt.hash(password, saltRounds);
+        // console.log(hashPassword)
+        this.set('password', hashPassword)
+
+    } catch (err) {
+        return value(err);
+    }
+
+})
 
 const usermodel = mongoose.model('usersss', uschema);
 module.exports = usermodel;

@@ -1,12 +1,11 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const mongoose = require('mongoose');
 require('dotenv').config();
+const app = express();
 
-const router = require('./routes/basic');
+const router = require('./routes/indexRouter');
 const { startServer } = require('./loadDb');
 
-const app = express();
 
 // For use the body parser
 app.use(express.json(), bodyParser.urlencoded({ extended: true }));
