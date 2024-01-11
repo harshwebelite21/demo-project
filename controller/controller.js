@@ -1,7 +1,8 @@
-const model = require('../models/user');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+
+const model = require('../models/user');
 
 // Number of rounds For hashing password
 const saltRounds = 10;
@@ -10,10 +11,12 @@ const saltRounds = 10;
 exports.adddata = async (req, res) => {
 
     const { name: userName, email: userEmail, age: userAge, birthdate: userBdate, password: password } = req.body;
-    // To encrypt Password
     
     try {
+        // To encrypt Password
         const hashPassword = await bcrypt.hash(password, saltRounds);
+
+        // To create New user 
         await model.create(
             {
                 name: userName,
