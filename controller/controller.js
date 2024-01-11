@@ -1,27 +1,34 @@
-const model = require('../models/user');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+
+const model = require('../models/user');
+
+// Number of rounds For hashing password
+const saltRounds = 10;
 
 //  Add new data
 exports.adddata = async (req, res) => {
 
-    const { name: userName, email: userEmail, age: userAge, birthdate: userBdate, password: userPassword } = req.body;
+    const { name: userName, email: userEmail, age: userAge, birthdate: userBdate, password: password } = req.body;
+    
     try {
+        // To encrypt Password
+        const hashPassword = await bcrypt.hash(password, saltRounds);
+
+        // To create New user 
         await model.create(
             {
                 name: userName,
                 email: userEmail,
                 birthdate: userBdate,
                 age: userAge,
-                password: userPassword,
+                password: hashPassword,
             }
         )
         res.status(201).send("Data Added sucessfully");
 
     } catch (err) {
-        console.log(".................." + err.message);
-        // console.log(Object.keys(res))
-        // return new Error("sasdsa")
         res.send(" Error in data Creation :" + err.message).status(400);
     }
 };
@@ -29,10 +36,9 @@ exports.adddata = async (req, res) => {
 // View the user data
 
 exports.viewuser = async (req, res) => {
-    const username = req.params.username;
+    const userId = req.params.userId;
     try {
-        const data = await model.findOne({ name: username }).lean();
-        // console.log(data);
+        const data = await model.findById(userId).lean();
         res.send("Hear is My Details : \n   Name : " + data.name + "\n Email :" + data.email + "\n Age : " + data.age + "\n Birthdate : " + data.birthdate).status(201);
 
     } catch (err) {
@@ -43,16 +49,19 @@ exports.viewuser = async (req, res) => {
 // Update the data using id 
 
 exports.updatedata = async (req, res) => {
-    const username = req.params.username;
-    const { id, name: newname, email: newemail, age: newAge, birthdate: newBdate, password: newPassword } = req.body;
+    const userId = req.params.userId;
+
+    const { name: newname, email: newemail, age: newAge, birthdate: newBdate, password: password } = req.body;
 
     try {
-        const data = await model.findByIdAndUpdate(id, {
+        const hashPassword = await bcrypt.hash(password, saltRounds);
+
+        const data = await model.findByIdAndUpdate(userId, {
             name: newname,
             email: newemail,
             birthdate: newBdate,
             age: newAge,
-            password: newPassword,
+            password: hashPassword,
         })
         res.send('Data Updated sucessful').status(201);
     } catch (err) {
@@ -64,7 +73,6 @@ exports.updatedata = async (req, res) => {
 
 exports.deletedata = async (req, res) => {
     const userId = req.params.userId;
-    console.log(req.params.userId);
     try {
         const data = await model.findByIdAndDelete(userId);
         res.send("data deleted sucessfully").status(200);;
