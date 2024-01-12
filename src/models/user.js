@@ -4,7 +4,7 @@ const schema = mongoose.Schema;
 const saltRounds = 10;
 
 const userSchema = new schema({
-  name: {
+  userName: {
     type: String,
     required: true,
     minLength: 3,
