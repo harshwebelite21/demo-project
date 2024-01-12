@@ -3,7 +3,9 @@ const model = require("../models/user");
 //  Add new data
 exports.adddata = async (req, res) => {
   try {
-    await model.create(({ userName, email, birthdate, age, password } = req.body));
+    await model.create(
+      ({ userName, email, birthdate, age, password } = req.body)
+    );
     res.status(201).send("Data Added sucessfully");
   } catch (err) {
     res.status(400).send(" Error in data Creation :" + err.message);

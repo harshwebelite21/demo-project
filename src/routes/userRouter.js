@@ -1,18 +1,18 @@
 const express = require("express");
 
-const controller = require("../controller/controller");
+const controller = require("../controller/userController");
 const route = express.Router();
 
 // Add New User
-route.post("/adduser", controller.adddata);
+route.post("/", controller.adddata);
 
 // Update Data
-route.put("/update/:userId", controller.updatedata);
+route.put("/:userId", controller.updatedata);
 
 // Delete Data
-route.delete("/delete/:userId", controller.deletedata);
+route.delete("/:userId", controller.deletedata);
 
 // View Perticular user
-route.get("/viewuser/:userId", controller.viewuser);
+route.get("/:userId", controller.viewuser);
 
 module.exports = route;
