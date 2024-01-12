@@ -39,11 +39,12 @@ exports.updatedata = async (req, res) => {
   try {
     const { name, email, birthdate, age, password } = req.body;
 
-    await userModel.findOneAndUpdate(
-      { _id: req.params.userId },
-      { name, email, birthdate, age, password }
-    );
-    res.status(201).send("Data Updated sucessful");
+    await userModel
+      .findOneAndUpdate(
+        { _id: req.params.userId },
+        { name, email, birthdate, age, password }
+      )
+      .then(res.status(201).send("Data Updated sucessful"));
   } catch (err) {
     res.status(400).send(err.message + "Error in data Updation");
   }
@@ -79,10 +80,7 @@ exports.login = async (req, res) => {
 
     if (passwordValidation) {
       // Generate JWT token
-      const token = jwt.sign(
-        { userId: userData._id},
-        process.env.SECRETKEY
-      );
+      const token = jwt.sign({ userId: userData._id }, process.env.SECRETKEY);
 
       // Setting cookie
       res.cookie("jwtToken", token, { httpOnly: true });
@@ -99,5 +97,5 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-  res.cookie("jwtToken").send("Logout Sucessful");
+  res.clearcookie("jwtToken").send("Logout Sucessful");
 };

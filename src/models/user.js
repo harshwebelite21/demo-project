@@ -9,6 +9,8 @@ const userSchema = new schema({
     required: true,
     minLength: 3,
     maxLength: 20,
+    trim:true
+    
   },
   birthdate: {
     type: Date,
