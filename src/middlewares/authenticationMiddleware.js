@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 // Middleware to check authentication status
 exports.isAuthenticated = (req, res, next) => {
   const token = req.cookies.jwtToken;
-  console.log(token);
   if (!token) {
     return res
       .status(403)
