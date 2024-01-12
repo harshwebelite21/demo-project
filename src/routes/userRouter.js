@@ -8,10 +8,10 @@ const route = express.Router();
 // Login authRoute
 route.post("/login", userController.login);
 // Logout authRoute
-route.get("/logout", userController.logout);
+route.get("/logout", isAuthenticated, userController.logout);
 
 // Add New User
-route.post("/", isAuthenticated, userController.adddata);
+route.post("/", userController.adddata);
 // Update Data
 route.put("/:userId", isAuthenticated, userController.updatedata);
 // Delete Data

@@ -4,7 +4,7 @@ const schema = mongoose.Schema;
 const saltRounds = 10;
 
 const userSchema = new schema({
-  userName: {
+  name: {
     type: String,
     required: true,
     minLength: 3,
@@ -17,6 +17,7 @@ const userSchema = new schema({
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: (value) => {
         // Regular expression for email validation

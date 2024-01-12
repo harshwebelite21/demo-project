@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 //  Add new data
 exports.adddata = async (req, res) => {
   try {
-    const { userName, email, age, birthdate, password } = req.body;
-    await userModel.create({ userName, email, birthdate, age, password });
+    const { name, email, age, birthdate, password } = req.body;
+    await userModel.create({ name, email, birthdate, age, password });
     res.status(201).send("Data Added sucessfully");
   } catch (err) {
     res.status(400).send(" Error in data Creation :" + err.message);
@@ -21,7 +21,7 @@ exports.viewuser = async (req, res) => {
       .status(201)
       .send(
         "Hear is My Details : \n   Name : " +
-          data.userName +
+          data.name +
           "\n Email :" +
           data.email +
           "\n Age : " +
@@ -37,11 +37,11 @@ exports.viewuser = async (req, res) => {
 // Update the data using id
 exports.updatedata = async (req, res) => {
   try {
-    const { userName, email, birthdate, age, password } = req.body;
+    const { name, email, birthdate, age, password } = req.body;
 
     await userModel.findOneAndUpdate(
       { _id: req.params.userId },
-      { userName, email, birthdate, age, password }
+      { name, email, birthdate, age, password }
     );
     res.status(201).send("Data Updated sucessful");
   } catch (err) {
@@ -62,10 +62,10 @@ exports.deletedata = async (req, res) => {
 
 // Login cheak
 exports.login = async (req, res) => {
-  const { userName, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const userData = await userModel.findOne({ userName: userName });
+    const userData = await userModel.findOne({ email: email });
 
     if (!userData) {
       return res.status(401).send("Inserted User Not Found");
@@ -80,14 +80,14 @@ exports.login = async (req, res) => {
     if (passwordValidation) {
       // Generate JWT token
       const token = jwt.sign(
-        { userId: userData._id, username: userData.userName },
+        { userId: userData._id},
         process.env.SECRETKEY
       );
 
       // Setting cookie
       res.cookie("jwtToken", token, { httpOnly: true });
 
-      res.status(200).send(`Login successful`);
+      res.status(200).send(`Login successful And Token is :- ${token}`);
     } else {
       res.status(401).send("Invalid password");
     }
@@ -99,5 +99,5 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-  res.cookie("jwtToken", "", { expires: new Date(0) }).send("Logout Sucessful");
+  res.cookie("jwtToken").send("Logout Sucessful");
 };
