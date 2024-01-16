@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 //  Add new data
-exports.adddata = async (req, res) => {
+exports.signup = async (req, res) => {
   try {
     const { name, email, age, birthdate, password } = req.body;
     await userModel.create({ name, email, birthdate, age, password });
@@ -16,18 +16,18 @@ exports.adddata = async (req, res) => {
 // View the user data
 exports.viewuser = async (req, res) => {
   try {
-    const data = await userModel.findById(req.params.userId).lean();
+    const userData = await userModel.findById(req.params.userId).lean();
     res
       .status(201)
       .send(
         "Hear is My Details : \n   Name : " +
-          data.name +
+          userData.name +
           "\n Email :" +
-          data.email +
+          userData.email +
           "\n Age : " +
-          data.age +
+          userData.age +
           "\n Birthdate : " +
-          data.birthdate
+          userData.birthdate
       );
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
@@ -97,5 +97,5 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-  res.clearcookie("jwtToken").send("Logout Sucessful");
+  res.clearCookie("jwtToken").send("Logout Sucessful");
 };

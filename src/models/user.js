@@ -9,8 +9,7 @@ const userSchema = new schema({
     required: true,
     minLength: 3,
     maxLength: 20,
-    trim:true
-    
+    trim: true,
   },
   birthdate: {
     type: Date,
@@ -39,6 +38,7 @@ const userSchema = new schema({
     type: String,
     required: true,
   },
+  
 });
 // To Encrypt Password while adding new data
 userSchema.pre("save", async function (value) {
@@ -68,5 +68,4 @@ userSchema.pre("findOneAndUpdate", async function (value) {
   }
 });
 
-const usermodel = mongoose.model("user", userSchema);
-module.exports = usermodel;
+module.exports = mongoose.model("user", userSchema);

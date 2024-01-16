@@ -1,0 +1,48 @@
+const productModel = require("../models/product");
+
+// To Show the all Products
+exports.getAllProducts = async (req, res) => {
+  try {
+    const ProductData = await productModel.find().lean();
+    res.status(200).send(ProductData);
+  } catch (err) {
+    res.status(400).send(" Error in Products feathing :" + err.message);
+  }
+};
+
+// Add Product Data
+exports.addProducts = async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+    await productModel.create({ name, description, price });
+    res.status(201).send("Data Added sucessfully");
+  } catch (err) {
+    res.status(400).send(" Error in data Creation :" + err.message);
+  }
+};
+
+// To Update Product Data
+exports.updateProduct = async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+
+    await productModel
+      .findOneAndUpdate(
+        { _id: req.params.productId },
+        { name, description, price }
+      )
+      .then(res.status(201).send("Data Updated sucessful In Product"));
+  } catch (err) {
+    res.status(400).send(err.message + "Error in data Updation In Product");
+  }
+};
+
+// To delete Product
+exports.deleteProduct = async (req, res) => {
+  try {
+    await productModel.findByIdAndDelete(req.params.productId);
+    res.status(200).send("data deleted sucessfully");
+  } catch (err) {
+    res.status(400).send(err.message + "Data Deletion Unsucessufl");
+  }
+};

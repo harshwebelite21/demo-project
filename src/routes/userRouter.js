@@ -9,9 +9,9 @@ const route = express.Router();
 route.post("/login", userController.login);
 // Logout authRoute
 route.get("/logout", isAuthenticated, userController.logout);
-
 // Add New User
-route.post("/", userController.adddata);
+route.post("/signup", userController.signup);
+
 // Update Data
 route.put("/:userId", isAuthenticated, userController.updatedata);
 // Delete Data
