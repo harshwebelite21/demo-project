@@ -13,7 +13,7 @@ exports.signup = async (req, res) => {
     res.status(400).send(" Error in data Creation :" + err.message);
   }
 };
-
+harshwebelite21
 // View the user data
 exports.viewuser = async (req, res) => {
   try {
@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
 
     if (passwordValidation) {
       // Generate JWT token
-      const token = jwt.sign({ userId: userData._id }, appConfig.jwtKey);
+      const token = jwt.sign({ userId: userData._id }, process.env.SECRETKEY,{expiresIn:'1d'});
 
       // Setting cookie
       res.cookie("jwtToken", token, { httpOnly: true });

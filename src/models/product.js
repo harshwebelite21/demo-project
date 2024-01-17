@@ -14,6 +14,7 @@ const productSchema = new schema({
   price: {
     type: Number,
     required: true,
+    default:0
   },
 });
 

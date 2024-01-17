@@ -1,4 +1,5 @@
 const cartModel = require("../models/cart");
+const product = require("../models/product");
 
 // Create a cart
 exports.addToCart = async (req, res) => {
@@ -6,11 +7,31 @@ exports.addToCart = async (req, res) => {
     const { userId, products } = req.body;
 
     // Cheak users cart availabele or not
-    const isUserAvailable = await cartModel.findOne({ userId: userId });
+    const isUserAvailable = await cartModel.findOne({ userId });
+    // const isUserAvailable = await cartModel.exists({ userId });   returns only id;
 
     // If User is avalable then Added Proudcuts to same cart other wise create new cart
     if (isUserAvailable) {
-      await cartModel.updateOne({ userId }, { $push: { products } });
+      const allProductIdAvilableInCart = isUserAvailable.products.map(
+        (product) => product.productId.toString()
+      );
+
+      console.log(allProductIdAvilableInCart);
+      const promises = products.map(async (element) => {
+        if (allProductIdAvilableInCart.includes(element.productId)) {
+          console.log("yes");
+          await cartModel.findOneAndUpdate(
+            { userId, "products.productId": element.productId },
+            { $inc: { "products.$.quantity": element.quantity } }
+          );
+          console.log(element.productId);
+        } else {
+          await cartModel.updateOne({ userId }, { $push: { products } });
+        }
+      });
+
+      await Promise.all(promises);
+      // }
     } else {
       await cartModel.create({ userId, products });
     }

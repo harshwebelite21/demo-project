@@ -25,16 +25,14 @@ exports.checkOut = async (req, res) => {
 
     // Finding the Total Amount of All Product in cart
     let totalBill = 0;
-    allProduct.forEach((productCollectionProducts) => {
-      cartProducts.products.forEach((cartProductData) => {
-        const { _id, price } = productCollectionProducts;
-        const { productId, quantity } = cartProductData;
-
-        if (_id.equals(productId)) {
-          totalBill += price * quantity;
-        }
-      });
+    allProduct.forEach(({ _id, price }) => {
+      const matchingProduct = cartProducts.products.find(({ productId, quantity }) => _id.equals(productId));
+    
+      if (matchingProduct) {
+        totalBill += price * matchingProduct.quantity;
+      }
     });
+    
 
     // Creating record in order table for history
     await orderModel.create({
