@@ -12,26 +12,25 @@ exports.addToCart = async (req, res) => {
 
     // If User is avalable then Added Proudcuts to same cart other wise create new cart
     if (isUserAvailable) {
+      // To save the all userid which is saved in user's specific cart
       const allProductIdAvilableInCart = isUserAvailable.products.map(
         (product) => product.productId.toString()
       );
 
-      console.log(allProductIdAvilableInCart);
+      // Create promises for all changes and last they all are resolved
       const promises = products.map(async (element) => {
         if (allProductIdAvilableInCart.includes(element.productId)) {
-          console.log("yes");
           await cartModel.findOneAndUpdate(
             { userId, "products.productId": element.productId },
             { $inc: { "products.$.quantity": element.quantity } }
           );
-          console.log(element.productId);
         } else {
           await cartModel.updateOne({ userId }, { $push: { products } });
         }
       });
 
+      //Resolve all promisis at one time
       await Promise.all(promises);
-      // }
     } else {
       await cartModel.create({ userId, products });
     }

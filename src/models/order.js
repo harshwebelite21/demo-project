@@ -4,13 +4,13 @@ const schema = mongoose.Schema;
 const orderSchema = new schema({
   userId: {
     type: schema.Types.ObjectId,
-    ref: 'user',
+    ref: "user",
   },
   products: [
     {
       productId: {
         type: schema.Types.ObjectId,
-        ref:'product'
+        ref: "product",
       },
       quantity: {
         type: Number,
