@@ -1,6 +1,7 @@
-const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const userModel = require("../models/user");
+const { appConfig } = require("../config/appConfig");
 
 //  Add new data
 exports.signup = async (req, res) => {
@@ -17,18 +18,7 @@ exports.signup = async (req, res) => {
 exports.viewuser = async (req, res) => {
   try {
     const userData = await userModel.findById(req.params.userId).lean();
-    res
-      .status(201)
-      .send(
-        "Hear is My Details : \n   Name : " +
-          userData.name +
-          "\n Email :" +
-          userData.email +
-          "\n Age : " +
-          userData.age +
-          "\n Birthdate : " +
-          userData.birthdate
-      );
+    res.status(200).send(userData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
   }
@@ -66,10 +56,10 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const userData = await userModel.findOne({ email: email });
+    const userData = await userModel.findOne({ email });
 
     if (!userData) {
-      return res.status(401).send("Inserted User Not Found");
+      return res.status(401).send("User not found!");
     }
 
     // Compare
@@ -80,7 +70,7 @@ exports.login = async (req, res) => {
 
     if (passwordValidation) {
       // Generate JWT token
-      const token = jwt.sign({ userId: userData._id }, process.env.SECRETKEY);
+      const token = jwt.sign({ userId: userData._id }, appConfig.jwtKey);
 
       // Setting cookie
       res.cookie("jwtToken", token, { httpOnly: true });
@@ -97,5 +87,5 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-  res.clearCookie("jwtToken").send("Logout Sucessful");
+  res.status(200).clearCookie("jwtToken").send("Logout Sucessful");
 };

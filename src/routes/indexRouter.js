@@ -8,12 +8,12 @@ const orderRouter = require("./orderRouter");
 
 //  Home Page
 route.get("/", (req, res) => {
-  res.send("hello");
+  res.status(200).send("hello");
 });
 
 route.use("/users", userRouter);
 route.use("/products", isAuthenticated, productRouter);
-route.use("/cart", isAuthenticated, cartRouter);
+route.use("/cart", cartRouter);
 route.use("/orders", isAuthenticated, orderRouter);
 
 module.exports = route;

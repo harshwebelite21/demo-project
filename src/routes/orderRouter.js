@@ -4,7 +4,7 @@ const orderController = require("../controller/orderController");
 const route = express.Router();
 
 // Cheakout
-route.post("/:userId",orderController.cheakOut);
+route.post("/:userId", orderController.checkOut);
 // View Cart
 route.get("/:userId", orderController.getOrderHistory);
 

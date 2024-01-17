@@ -38,7 +38,6 @@ const userSchema = new schema({
     type: String,
     required: true,
   },
-  
 });
 // To Encrypt Password while adding new data
 userSchema.pre("save", async function (value) {
