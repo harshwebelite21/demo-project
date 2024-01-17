@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 const userSchema = require("./user");
+const productModel = require("./product");
 
 const orderSchema = new schema({
   userId: {
@@ -10,7 +11,8 @@ const orderSchema = new schema({
   products: [
     {
       productId: {
-        type: String,
+        type: schema.Types.ObjectId,
+        ref: productModel,
       },
       quantity: {
         type: Number,

@@ -3,8 +3,8 @@ const productModel = require("../models/product");
 // To Show the all Products
 exports.getAllProducts = async (req, res) => {
   try {
-    const ProductData = await productModel.find().lean();
-    res.status(200).send(ProductData);
+    const productData = await productModel.find().lean();
+    res.status(200).send(productData);
   } catch (err) {
     res.status(400).send(" Error in Products feathing :" + err.message);
   }

@@ -1,6 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const {appConfig}=require('./appConfig');
-
+const { appConfig } = require("./appConfig");
 
 exports.startServer = () => {
   // Handling connection events

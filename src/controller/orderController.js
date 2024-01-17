@@ -1,20 +1,24 @@
-const CartModel = require("../models/cart");
+const cartModel = require("../models/cart");
 const productModel = require("../models/product");
 const orderModel = require("../models/order");
 
 // Create a Order
-exports.cheakOut = async (req, res) => {
+exports.checkOut = async (req, res) => {
   try {
     // Find the Cart products Of the specific user
-    const { cartProducts } = await CartModel.findOne(
-      {
-        userId: req.params.userId,
-      },
-      { products: 1, _id: 0 }
-    ).lean();
+    const cartProducts = await cartModel
+      .findOne(
+        {
+          userId: req.params.userId,
+        },
+        { products: 1, _id: 0 }
+      )
+      .lean();
 
     // Maping the the product Id from cart Products
-    const allProductId = cartProducts.map((product) => product.productId);
+    const allProductId = cartProducts.products.map(
+      (product) => product.productId
+    );
 
     // Find the product details from the product Collection which id is in allProductId
     const allProduct = await productModel.find({ _id: { $in: allProductId } });
@@ -22,10 +26,12 @@ exports.cheakOut = async (req, res) => {
     // Finding the Total Amount of All Product in cart
     let totalBill = 0;
     allProduct.forEach((productCollectionProducts) => {
-      cartProducts.forEach((cartProductData) => {
-        if (productCollectionProducts._id == cartProductData.productId) {
-          totalBill +=
-            productCollectionProducts.price * cartProductData.quantity;
+      cartProducts.products.forEach((cartProductData) => {
+        const { _id, price } = productCollectionProducts;
+        const { productId, quantity } = cartProductData;
+
+        if (_id.equals(productId)) {
+          totalBill += price * quantity;
         }
       });
     });
@@ -33,15 +39,15 @@ exports.cheakOut = async (req, res) => {
     // Creating record in order table for history
     await orderModel.create({
       userId: req.params.userId,
-      products: cartProducts,
+      products: cartProducts.products,
       amount: totalBill,
     });
 
     // To Delete cart from the Cart collection After saving History in Order Table
-    await CartModel.deleteOne({ userId: req.params.userId });
+    await cartModel.deleteOne({ userId: req.params.userId });
     res.status(201).send("Order Placed Succesfully");
   } catch (err) {
-    res.status(400).send(" Error in Cheakout Process :" + err.message);
+    res.status(400).send(" Error in Checkout Process :" + err.message);
   }
 };
 
@@ -51,7 +57,7 @@ exports.getOrderHistory = async (req, res) => {
     const orderData = await orderModel
       .findOne({ userId: req.params.userId })
       .lean();
-    res.status(201).send(orderData);
+    res.status(200).send(orderData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
   }
