@@ -10,9 +10,9 @@ route.get("/", productController.getAllProducts);
 route.post("/", productController.addProducts);
 
 // Update Product Details
-route.put("/:productId", productController.updateProduct);
+route.put("/:productid", productController.updateProduct);
 
 // Delete Product
-route.delete("/:productId", productController.deleteProduct);
+route.delete("/:productid", productController.deleteProduct);
 
 module.exports = route;

@@ -7,15 +7,15 @@ const route = express.Router();
 route.post("/", cartController.addToCart);
 
 // Remove the  user Cart
-route.delete("/:userId", cartController.removeFromCart);
+route.delete("/:userid", cartController.removeFromCart);
 
 // Remove the Specific Item From cart
-route.patch("/items/:productId", cartController.removeSpecificItem);
+route.patch("/items/:productid", cartController.removeSpecificItem);
 
 // Decrement the quantity from cart
-route.patch("/reduceQuantity/:productId",cartController.reduceQuantity)
+route.patch("/reduce-quantity/:productid",cartController.reduceQuantity)
 
 // View the user specific Cart
-route.get("/:userId", cartController.findCart);
+route.get("/:userid", cartController.findCart);
 
 module.exports = route;

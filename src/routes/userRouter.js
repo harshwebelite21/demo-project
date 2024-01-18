@@ -13,10 +13,10 @@ route.get("/logout", isAuthenticated, userController.logout);
 route.post("/signup", userController.signup);
 
 // Update User Data
-route.put("/:userId", isAuthenticated, userController.updatedata);
+route.put("/:userid", isAuthenticated, userController.updatedata);
 // Delete User Data
-route.delete("/:userId", isAuthenticated, userController.deletedata);
+route.delete("/:userid", isAuthenticated, userController.deletedata);
 // View Particular user
-route.get("/:userId", isAuthenticated, userController.viewuser);
+route.get("/:userid", isAuthenticated, userController.viewuser);
 
 module.exports = route;

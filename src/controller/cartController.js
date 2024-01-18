@@ -4,35 +4,35 @@ const product = require("../models/product");
 // Create a cart
 exports.addToCart = async (req, res) => {
   try {
-    const { userId, products } = req.body;
+    const { userid, products } = req.body;
 
     // Check users cart available or not
-    const availableUser = await cartModel.findOne({ userId });
-    // const availableUser = await cartModel.exists({ userId });   returns only id;
+    const availableUser = await cartModel.findOne({ userid });
+    // const availableUser = await cartModel.exists({ userid });   returns only id;
 
     // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
       // To save the all userid which is saved in user's specific cart
-      const allProductIdAvilableInCart = availableUser.products.map(
-        ({ productId }) => productId.toString()
+      const allproductidAvilableInCart = availableUser.products.map(
+        ({ productid }) => productid.toString()
       );
 
       // Create promises for all changes and last they all are resolved
       const promises = products.map(async (element) => {
-        if (allProductIdAvilableInCart.includes(element.productId)) {
+        if (allproductidAvilableInCart.includes(element.productid)) {
           await cartModel.findOneAndUpdate(
-            { userId, "products.productId": element.productId },
+            { userid, "products.productid": element.productid },
             { $inc: { "products.$.quantity": element.quantity } }
           );
         } else {
-          await cartModel.updateOne({ userId }, { $push: { products } });
+          await cartModel.updateOne({ userid }, { $push: { products } });
         }
       });
 
       //Resolve all promises at one time
       await Promise.all(promises);
     } else {
-      await cartModel.create({ userId, products });
+      await cartModel.create({ userid, products });
     }
 
     res.status(201).send("Data Added successfully In the cart");
@@ -45,7 +45,7 @@ exports.addToCart = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   try {
     // Delete data from cart using cart id
-    await cartModel.findOneAndDelete({ userId: req.params.userId });
+    await cartModel.findOneAndDelete({ userid: req.params.userid });
     res.status(200).send("data deleted successfully from cart");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful from cart");
@@ -56,7 +56,7 @@ exports.removeFromCart = async (req, res) => {
 exports.findCart = async (req, res) => {
   try {
     const cartData = await cartModel
-      .findOne({ userId: req.params.userId })
+      .findOne({ userid: req.params.userid })
       .lean();
     res.status(200).send(cartData);
   } catch (err) {
@@ -68,14 +68,14 @@ exports.findCart = async (req, res) => {
 
 exports.removeSpecificItem = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const { userId } = req.body;
+    const { productid } = req.params;
+    const { userid } = req.body;
     const updatedCart = await cartModel.updateOne(
       {
-        userId,
-        "products.productId": productId,
+        userid,
+        "products.productid": productid,
       },
-      { $pull: { products: { productId } } },
+      { $pull: { products: { productid } } },
       { new: true }
     );
     if (!updatedCart || updatedCart.modifiedCount < 1) {
@@ -91,12 +91,12 @@ exports.removeSpecificItem = async (req, res) => {
 
 exports.reduceQuantity = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const { userId } = req.body;
+    const { productid } = req.params;
+    const { userid } = req.body;
     const decrementedData = await cartModel.updateOne(
       {
-        userId,
-        "products.productId": productId,
+        userid,
+        "products.productid": productid,
       },
       {
         $inc: { "products.$.quantity": -1 },

@@ -15,7 +15,7 @@ exports.signup = async (req, res) => {
 // View the user data
 exports.viewuser = async (req, res) => {
   try {
-    const userData = await userModel.findById(req.params.userId).lean();
+    const userData = await userModel.findById(req.params.userid).lean();
     res.status(200).send(userData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
@@ -29,7 +29,7 @@ exports.updatedata = async (req, res) => {
 
     await userModel
       .findOneAndUpdate(
-        { _id: req.params.userId },
+        { _id: req.params.userid },
         { name, email, birthdate, age, password }
       )
       .then(res.status(201).send("Data Updated successful"));
@@ -40,9 +40,9 @@ exports.updatedata = async (req, res) => {
 
 //  Delete data
 exports.deletedata = async (req, res) => {
-  const userId = req.params.userId;
+  const userid = req.params.userid;
   try {
-    await userModel.findByIdAndDelete(userId);
+    await userModel.findByIdAndDelete(userid);
     res.status(200).send("data deleted successfully");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful");
@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
       // Generate JWT token
 
       const token = jsonWebToken.generateJwtToken(
-        { userId: userData._id },
+        { userid: userData._id },
         {
           expiresIn: "1d",
         }

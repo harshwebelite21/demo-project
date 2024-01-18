@@ -9,25 +9,25 @@ exports.checkOut = async (req, res) => {
     const cartProducts = await cartModel
       .findOne(
         {
-          userId: req.params.userId,
+          userid: req.params.userid,
         },
         { products: 1, _id: 0 }
       )
       .lean();
 
     // Mapping the the product Id from cart Products
-    const allProductId = cartProducts.products.map(
-      (product) => product.productId
+    const allproductid = cartProducts.products.map(
+      (product) => product.productid
     );
 
-    // Find the product details from the product Collection which id is in allProductId
-    const allProduct = await productModel.find({ _id: { $in: allProductId } });
+    // Find the product details from the product Collection which id is in allproductid
+    const allProduct = await productModel.find({ _id: { $in: allproductid } });
 
     // Finding the Total Amount of All Product in cart
     let totalBill = 0;
     allProduct.forEach(({ _id, price }) => {
-      const matchingProduct = cartProducts.products.find(({ productId }) =>
-        _id.equals(productId)
+      const matchingProduct = cartProducts.products.find(({ productid }) =>
+        _id.equals(productid)
       );
 
       if (matchingProduct) {
@@ -37,13 +37,13 @@ exports.checkOut = async (req, res) => {
 
     // Creating record in order table for history
     await orderModel.create({
-      userId: req.params.userId,
+      userid: req.params.userid,
       products: cartProducts.products,
       amount: totalBill,
     });
 
     // To Delete cart from the Cart collection After saving History in Order Table
-    await cartModel.deleteOne({ userId: req.params.userId });
+    await cartModel.deleteOne({ userid: req.params.userid });
     res.status(201).send("Order Placed Successfully");
   } catch (err) {
     res.status(400).send(" Error in Checkout Process :" + err.message);
@@ -54,7 +54,7 @@ exports.checkOut = async (req, res) => {
 exports.getOrderHistory = async (req, res) => {
   try {
     const orderData = await orderModel
-      .findOne({ userId: req.params.userId })
+      .findOne({ userid: req.params.userid })
       .lean();
     res.status(200).send(orderData);
   } catch (err) {

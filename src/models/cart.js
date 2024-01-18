@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
 const cartSchema = new schema({
-  userId: {
+  userid: {
     type: schema.Types.ObjectId,
     ref: "User",
   },
   products: [
     {
-      productId: {
+      productid: {
         type: schema.Types.ObjectId,
         ref: "Product",
       },
@@ -20,4 +20,4 @@ const cartSchema = new schema({
   ],
 });
 
-module.exports = mongoose.model("Cart", cartSchema);
+module.exports = mongoose.model("art", cartSchema);
