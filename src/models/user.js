@@ -67,4 +67,4 @@ userSchema.pre("findOneAndUpdate", async function (value) {
   }
 });
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model("User", userSchema);

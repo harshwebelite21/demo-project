@@ -3,13 +3,15 @@ const express = require("express");
 const cartController = require("../controller/cartController");
 const route = express.Router();
 
-// View Products
+// Add New Item To cart
 route.post("/", cartController.addToCart);
 
-// Add Product
+// Remove the  user Cart
 route.delete("/:userId", cartController.removeFromCart);
 
-// View Cart
+// Remove the Specific Item From cart
+
+// View the user specific Cart
 route.get("/:userId", cartController.findCart);
 
 module.exports = route;

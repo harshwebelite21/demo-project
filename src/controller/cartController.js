@@ -7,13 +7,13 @@ exports.addToCart = async (req, res) => {
     const { userId, products } = req.body;
 
     // Cheak users cart availabele or not
-    const isUserAvailable = await cartModel.findOne({ userId });
-    // const isUserAvailable = await cartModel.exists({ userId });   returns only id;
+    const availableUser = await cartModel.findOne({ userId });
+    // const availableUser = await cartModel.exists({ userId });   returns only id;
 
     // If User is avalable then Added Proudcuts to same cart other wise create new cart
-    if (isUserAvailable) {
+    if (availableUser) {
       // To save the all userid which is saved in user's specific cart
-      const allProductIdAvilableInCart = isUserAvailable.products.map(
+      const allProductIdAvilableInCart = availableUser.products.map(
         (product) => product.productId.toString()
       );
 
@@ -29,7 +29,7 @@ exports.addToCart = async (req, res) => {
         }
       });
 
-      //Resolve all promisis at one time
+      //Resolve all promises at one time
       await Promise.all(promises);
     } else {
       await cartModel.create({ userId, products });

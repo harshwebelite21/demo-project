@@ -9,7 +9,7 @@ route.get("/", productController.getAllProducts);
 // Add Product
 route.post("/", productController.addProducts);
 
-// Update Product
+// Update Product Details
 route.put("/:productId", productController.updateProduct);
 
 // Delete Product

@@ -9,12 +9,12 @@ const route = express.Router();
 route.post("/login", userController.login);
 // Logout authRoute
 route.get("/logout", isAuthenticated, userController.logout);
-// Add New User
+// Add New User or Signup
 route.post("/signup", userController.signup);
 
-// Update Data
+// Update User Data
 route.put("/:userId", isAuthenticated, userController.updatedata);
-// Delete Data
+// Delete User Data
 route.delete("/:userId", isAuthenticated, userController.deletedata);
 // View Perticular user
 route.get("/:userId", isAuthenticated, userController.viewuser);

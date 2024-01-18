@@ -3,9 +3,9 @@ const express = require("express");
 const orderController = require("../controller/orderController");
 const route = express.Router();
 
-// Cheakout
+// Checkout
 route.post("/:userId", orderController.checkOut);
-// View Cart
+// View Order Histroy using user Specific userId
 route.get("/:userId", orderController.getOrderHistory);
 
 module.exports = route;

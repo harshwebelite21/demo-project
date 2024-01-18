@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
-const { appConfig } = require("../config/appConfig");
+const jsonWebToken = require("../utils/jwt");
 
 //  Add new data
 exports.signup = async (req, res) => {
@@ -69,9 +68,13 @@ exports.login = async (req, res) => {
 
     if (passwordValidation) {
       // Generate JWT token
-      const token = jwt.sign({ userId: userData._id }, process.env.SECRETKEY, {
-        expiresIn: "1d",
-      });
+
+      const token = jsonWebToken.generateJwtToken(
+        { userId: userData._id },
+        {
+          expiresIn: "1d",
+        }
+      );
 
       // Setting cookie
       res.cookie("jwtToken", token, { httpOnly: true });
