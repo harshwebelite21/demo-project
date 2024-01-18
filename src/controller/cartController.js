@@ -6,15 +6,15 @@ exports.addToCart = async (req, res) => {
   try {
     const { userId, products } = req.body;
 
-    // Cheak users cart availabele or not
+    // Check users cart available or not
     const availableUser = await cartModel.findOne({ userId });
     // const availableUser = await cartModel.exists({ userId });   returns only id;
 
-    // If User is avalable then Added Proudcuts to same cart other wise create new cart
+    // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
       // To save the all userid which is saved in user's specific cart
-      const allProductIdAvilableInCart = availableUser.products.map(
-        (product) => product.productId.toString()
+      const allProductIdAvilableInCart = availableUser.products.map((product) =>
+        product.productId.toString()
       );
 
       // Create promises for all changes and last they all are resolved
@@ -35,7 +35,7 @@ exports.addToCart = async (req, res) => {
       await cartModel.create({ userId, products });
     }
 
-    res.status(201).send("Data Added sucessfully In the cart");
+    res.status(201).send("Data Added successfully In the cart");
   } catch (err) {
     res.status(400).send(" Error in cart Creation :" + err.message);
   }
@@ -46,9 +46,9 @@ exports.removeFromCart = async (req, res) => {
   try {
     // Delete data from cart using cart id
     await cartModel.findOneAndDelete({ userId: req.params.userId });
-    res.status(200).send("data deleted sucessfully from cart");
+    res.status(200).send("data deleted successfully from cart");
   } catch (err) {
-    res.status(400).send(err.message + "Data Deletion Unsucessufl from cart");
+    res.status(400).send(err.message + "Data Deletion Unsuccessful from cart");
   }
 };
 
@@ -61,5 +61,52 @@ exports.findCart = async (req, res) => {
     res.status(200).send(cartData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
+  }
+};
+
+// To remove the specific item from cart
+
+exports.removeSpecificItem = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+    const updatedCart = await cartModel.updateOne(
+      {
+        userId,
+        "products.productId": productId,
+      },
+      { $pull: { products: { productId } } },
+      { new: true }
+    );
+    if (!updatedCart || updatedCart.modifiedCount < 1) {
+      return res.status(404).json({ error: "Cart or item not found." });
+    }
+
+    res.send("Item Removed from your Cart");
+  } catch (err) {
+    console.error("Error removing item from cart:", err);
+    res.status(500).json({ err: "Internal Server Error" });
+  }
+};
+
+exports.decrementQuantity = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+    const decrementedData = await cartModel.updateOne(
+      {
+        userId,
+        "products.productId": productId,
+      },
+      {
+        $inc: { "products.$.quantity": -1 },
+      },
+      { new: true }
+    );
+    if (!decrementedData || decrementedData.modifiedCount < 1) {
+      return res.status(404).json({ error: "Cart or item not found." });
+    }
+    res.json("Item Decremented from your Cart");
+  } catch (err) {
+    console.error("Error in Decrement the count of item from cart:", err);
+    res.status(500).json({ err: "Internal Server Error" });
   }
 };

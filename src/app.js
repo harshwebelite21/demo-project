@@ -15,11 +15,11 @@ app.use(cookieParser());
 
 // Handle Routing
 app.use(router);
-// Database connnetion
+// Database connection
 
 startServer();
 
-//  Start server after cheaking connnection
+//  Start server after checking connection
 app.listen(appConfig.port, () => {
   console.log("server is running on port " + appConfig.port);
 });
