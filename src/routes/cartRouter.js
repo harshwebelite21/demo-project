@@ -10,10 +10,10 @@ route.post("/", cartController.addToCart);
 route.delete("/:userId", cartController.removeFromCart);
 
 // Remove the Specific Item From cart
-route.post("/removeSpecificItem", cartController.removeSpecificItem);
+route.patch("/items/:productId", cartController.removeSpecificItem);
 
 // Decrement the quantity from cart
-route.post("decrementQuantity",cartController.decrementQuantity)
+route.patch("/reduceQuantity/:productId",cartController.reduceQuantity)
 
 // View the user specific Cart
 route.get("/:userId", cartController.findCart);

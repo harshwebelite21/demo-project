@@ -13,8 +13,8 @@ exports.addToCart = async (req, res) => {
     // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
       // To save the all userid which is saved in user's specific cart
-      const allProductIdAvilableInCart = availableUser.products.map((product) =>
-        product.productId.toString()
+      const allProductIdAvilableInCart = availableUser.products.map(
+        ({ productId }) => productId.toString()
       );
 
       // Create promises for all changes and last they all are resolved
@@ -68,7 +68,8 @@ exports.findCart = async (req, res) => {
 
 exports.removeSpecificItem = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
+    const { productId } = req.params;
+    const { userId } = req.body;
     const updatedCart = await cartModel.updateOne(
       {
         userId,
@@ -88,9 +89,10 @@ exports.removeSpecificItem = async (req, res) => {
   }
 };
 
-exports.decrementQuantity = async (req, res) => {
+exports.reduceQuantity = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
+    const { productId } = req.params;
+    const { userId } = req.body;
     const decrementedData = await cartModel.updateOne(
       {
         userId,
