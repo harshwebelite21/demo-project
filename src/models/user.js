@@ -4,11 +4,12 @@ const schema = mongoose.Schema;
 const saltRounds = 10;
 
 const userSchema = new schema({
-  userName: {
+  name: {
     type: String,
     required: true,
     minLength: 3,
     maxLength: 20,
+    trim: true,
   },
   birthdate: {
     type: Date,
@@ -17,6 +18,7 @@ const userSchema = new schema({
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: (value) => {
         // Regular expression for email validation
@@ -65,5 +67,4 @@ userSchema.pre("findOneAndUpdate", async function (value) {
   }
 });
 
-const usermodel = mongoose.model("user", userSchema);
-module.exports = usermodel;
+module.exports = mongoose.model("User", userSchema);
