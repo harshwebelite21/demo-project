@@ -16,12 +16,12 @@ exports.checkOut = async (req, res) => {
       .lean();
 
     // Mapping the the product Id from cart Products
-    const allproductid = cartProducts.products.map(
+    const allproductId = cartProducts.products.map(
       (product) => product.productid
     );
 
-    // Find the product details from the product Collection which id is in allproductid
-    const allProduct = await productModel.find({ _id: { $in: allproductid } });
+    // Find the product details from the product Collection which id is in allproductId
+    const allProduct = await productModel.find({ _id: { $in: allproductId } });
 
     // Finding the Total Amount of All Product in cart
     let totalBill = 0;

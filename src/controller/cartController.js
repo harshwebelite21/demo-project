@@ -13,13 +13,13 @@ exports.addToCart = async (req, res) => {
     // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
       // To save the all userid which is saved in user's specific cart
-      const allproductidAvilableInCart = availableUser.products.map(
+      const allproductIdAvilableInCart = availableUser.products.map(
         ({ productid }) => productid.toString()
       );
 
       // Create promises for all changes and last they all are resolved
       const promises = products.map(async (element) => {
-        if (allproductidAvilableInCart.includes(element.productid)) {
+        if (allproductIdAvilableInCart.includes(element.productid)) {
           await cartModel.findOneAndUpdate(
             { userid, "products.productid": element.productid },
             { $inc: { "products.$.quantity": element.quantity } }
