@@ -57,7 +57,9 @@ exports.findCart = async (req, res) => {
   try {
     const cartData = await cartModel
       .findOne({ userid: req.params.userid })
+      .populate("userid")
       .lean();
+    console.log(cartData);
     res.status(200).send(cartData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
@@ -70,14 +72,16 @@ exports.removeSpecificItem = async (req, res) => {
   try {
     const { productid } = req.params;
     const { userid } = req.body;
-    const updatedCart = await cartModel.updateOne(
-      {
-        userid,
-        "products.productid": productid,
-      },
-      { $pull: { products: { productid } } },
-      { new: true }
-    );
+    const updatedCart = await cartModel
+      .updateOne(
+        {
+          userid,
+          "products.productid": productid,
+        },
+        { $pull: { products: { productid } } },
+        { new: true }
+      )
+      .populate("userid");
     if (!updatedCart || updatedCart.modifiedCount < 1) {
       return res.status(404).json({ error: "Cart or item not found." });
     }
@@ -93,16 +97,18 @@ exports.reduceQuantity = async (req, res) => {
   try {
     const { productid } = req.params;
     const { userid } = req.body;
-    const decrementedData = await cartModel.updateOne(
-      {
-        userid,
-        "products.productid": productid,
-      },
-      {
-        $inc: { "products.$.quantity": -1 },
-      },
-      { new: true }
-    );
+    const decrementedData = await cartModel
+      .updateOne(
+        {
+          userid,
+          "products.productid": productid,
+        },
+        {
+          $inc: { "products.$.quantity": -1 },
+        },
+        { new: true }
+      )
+      .populate("userid");
     if (!decrementedData || decrementedData.modifiedCount < 1) {
       return res.status(404).json({ error: "Cart or item not found." });
     }
