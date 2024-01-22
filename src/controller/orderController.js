@@ -9,7 +9,7 @@ exports.checkOut = async (req, res) => {
     const cartProducts = await cartModel
       .findOne(
         {
-          userid: req.params.userid,
+          userId: req.params.userId,
         },
         { products: 1, _id: 0 }
       )
@@ -17,7 +17,7 @@ exports.checkOut = async (req, res) => {
 
     // Mapping the the product Id from cart Products
     const allproductId = cartProducts.products.map(
-      (product) => product.productid
+      (product) => product.productId
     );
 
     // Find the product details from the product Collection which id is in allproductId
@@ -26,8 +26,8 @@ exports.checkOut = async (req, res) => {
     // Finding the Total Amount of All Product in cart
     let totalBill = 0;
     allProduct.forEach(({ _id, price }) => {
-      const matchingProduct = cartProducts.products.find(({ productid }) =>
-        _id.equals(productid)
+      const matchingProduct = cartProducts.products.find(({ productId }) =>
+        _id.equals(productId)
       );
 
       if (matchingProduct) {
@@ -37,13 +37,13 @@ exports.checkOut = async (req, res) => {
 
     // Creating record in order table for history
     await orderModel.create({
-      userid: req.params.userid,
+      userId: req.params.userId,
       products: cartProducts.products,
       amount: totalBill,
     });
 
     // To Delete cart from the Cart collection After saving History in Order Table
-    await cartModel.deleteOne({ userid: req.params.userid });
+    await cartModel.deleteOne({ userId: req.params.userId });
     res.status(201).send("Order Placed Successfully");
   } catch (err) {
     res.status(400).send(" Error in Checkout Process :" + err.message);
@@ -54,7 +54,7 @@ exports.checkOut = async (req, res) => {
 exports.getOrderHistory = async (req, res) => {
   try {
     const orderData = await orderModel
-      .findOne({ userid: req.params.userid })
+      .findOne({ userId: req.params.userId })
       .lean();
     res.status(200).send(orderData);
   } catch (err) {

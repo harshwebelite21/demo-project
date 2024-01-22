@@ -15,7 +15,7 @@ exports.signup = async (req, res) => {
 // View the user data
 exports.viewuser = async (req, res) => {
   try {
-    const userData = await userModel.findById(req.params.userid).lean();
+    const userData = await userModel.findById(req.params.userId).lean();
     res.status(200).send(userData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
@@ -29,10 +29,10 @@ exports.updatedata = async (req, res) => {
 
     await userModel
       .findOneAndUpdate(
-        { _id: req.params.userid },
+        { _id: req.params.userId },
         { name, email, birthdate, age, password }
       )
-      .then(res.status(201).send("Data Updated successful"));
+      res.status(201).send("Data Updated successful");
   } catch (err) {
     res.status(400).send(err.message + "Error in data Updating");
   }
@@ -40,9 +40,9 @@ exports.updatedata = async (req, res) => {
 
 //  Delete data
 exports.deletedata = async (req, res) => {
-  const userid = req.params.userid;
+  const userId = req.params.userId;
   try {
-    await userModel.findByIdAndDelete(userid);
+    await userModel.findByIdAndDelete(userId);
     res.status(200).send("data deleted successfully");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful");
@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
       // Generate JWT token
 
       const token = jsonWebToken.generateJwtToken(
-        { userid: userData._id },
+        { userId: userData._id },
         {
           expiresIn: "1d",
         }

@@ -5,35 +5,51 @@ const product = require("../models/product");
 // Create a cart
 exports.addToCart = async (req, res) => {
   try {
-    const { userid, products } = req.body;
+    const { userId, products } = req.body;
 
     // Check users cart available or not
-    const availableUser = await cartModel.findOne({ userid });
-    // const availableUser = await cartModel.exists({ userid });   returns only id;
+    const availableUser = await cartModel.findOne({ userId });
+    // const availableUser = await cartModel.exists({ userId });   returns only id;
 
     // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
-      // To save the all userid which is saved in user's specific cart
+      // To save the all userId which is saved in user's specific cart
       const allproductIdAvilableInCart = availableUser.products.map(
-        ({ productid }) => productid.toString()
+        ({ productId }) => productId.toString()
       );
 
       // Create promises for all changes and last they all are resolved
       const promises = products.map(async (element) => {
-        if (allproductIdAvilableInCart.includes(element.productid)) {
+        if (allproductIdAvilableInCart.includes(element.productId.toString())) {
           await cartModel.findOneAndUpdate(
-            { userid, "products.productid": element.productid },
+            {
+              userId,
+              "products.productId": new mongoose.Types.ObjectId(
+                element.productId
+              ),
+            },
             { $inc: { "products.$.quantity": element.quantity } }
           );
         } else {
-          await cartModel.updateOne({ userid }, { $push: { products } });
+          await cartModel.updateOne(
+            { userId },
+            {
+              $push: {
+                products: {
+                  productId: new mongoose.Types.ObjectId(element.productId),
+                  quantity: element.quantity,
+                },
+              },
+            }
+          );
         }
       });
 
       //Resolve all promises at one time
       await Promise.all(promises);
     } else {
-      await cartModel.create({ userid, products });
+      console.log("hii");
+      await cartModel.create({ userId, products });
     }
 
     res.status(201).send("Data Added successfully In the cart");
@@ -46,7 +62,7 @@ exports.addToCart = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   try {
     // Delete data from cart using cart id
-    await cartModel.findOneAndDelete({ userid: req.params.userid });
+    await cartModel.findOneAndDelete({ userId: req.params.userId });
     res.status(200).send("data deleted successfully from cart");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful from cart");
@@ -59,66 +75,66 @@ exports.findCart = async (req, res) => {
     const cartData = await cartModel.aggregate([
       {
         $match: {
-          userid: new mongoose.Types.ObjectId("65a76d78ca09b0052681193a"),
+          userId: new mongoose.Types.ObjectId(req.params.userId),
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "userid",
+          localField: "userId",
           foreignField: "_id",
           as: "user",
         },
       },
-      {
-        $unwind: {
-          path: "$user",
-        },
-      },
-      {
-        $unwind: {
-          path: "$products",
-        },
-      },
+      // {
+      //   $unwind: {
+      //     path: "$user",
+      //   },
+      // },
+      // {
+      //   $unwind: {
+      //     path: "$products",
+      //   },
+      // },
       {
         $lookup: {
           from: "products",
-          localField: "products.productid",
+          localField: "products.productId",
           foreignField: "_id",
           as: "product",
         },
       },
-      {
-        $unwind: {
-          path: "$product",
-        },
-      },
-      {
-        $group: {
-          _id: "$userid",
-          user: {
-            $first: {
-              _id: "$user._id",
-              name: "$user.name",
-              birthdate: "$user.birthdate",
-              email: "$user.email",
-              age: "$user.age",
-            },
-          },
-          products: {
-            $push: {
-              productid: "$products.productid",
-              quantity: "$products.quantity",
-              product: {
-                _id: "$product._id",
-                name: "$product.name",
-                description: "$product.description",
-                price: "$product.price",
-              },
-            },
-          },
-        },
-      },
+      // {
+      //   $unwind: {
+      //     path: "$product",
+      //   },
+      // },
+      // {
+      //   $group: {
+      //     _id: "$userId",
+      //     user: {
+      //       $first: {
+      //         _id: "$user._id",
+      //         name: "$user.name",
+      //         birthdate: "$user.birthdate",
+      //         email: "$user.email",
+      //         age: "$user.age",
+      //       },
+      //     },
+      //     products: {
+      //       $push: {
+      //         productId: "$products.productId",
+      //         quantity: "$products.quantity",
+      //         product: {
+      //           _id: "$product._id",
+      //           name: "$product.name",
+      //           description: "$product.description",
+      //           price: "$product.price",
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
     ]);
     console.log(cartData);
     res.status(200).send(cartData);
@@ -131,18 +147,18 @@ exports.findCart = async (req, res) => {
 
 exports.removeSpecificItem = async (req, res) => {
   try {
-    const { productid } = req.params;
-    const { userid } = req.body;
+    const { productId } = req.params;
+    const { userId } = req.body;
     const updatedCart = await cartModel
       .updateOne(
         {
-          userid,
-          "products.productid": productid,
+          userId,
+          "products.productId": productId,
         },
-        { $pull: { products: { productid } } },
+        { $pull: { products: { productId } } },
         { new: true }
       )
-      .populate("userid");
+      .populate("userId");
     if (!updatedCart || updatedCart.modifiedCount < 1) {
       return res.status(404).json({ error: "Cart or item not found." });
     }
@@ -156,20 +172,20 @@ exports.removeSpecificItem = async (req, res) => {
 
 exports.reduceQuantity = async (req, res) => {
   try {
-    const { productid } = req.params;
-    const { userid } = req.body;
+    const { productId } = req.params;
+    const { userId } = req.body;
     const decrementedData = await cartModel
       .updateOne(
         {
-          userid,
-          "products.productid": productid,
+          userId,
+          "products.productId": productId,
         },
         {
           $inc: { "products.$.quantity": -1 },
         },
         { new: true }
       )
-      .populate("userid");
+      .populate("userId");
     if (!decrementedData || decrementedData.modifiedCount < 1) {
       return res.status(404).json({ error: "Cart or item not found." });
     }

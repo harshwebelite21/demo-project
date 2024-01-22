@@ -28,7 +28,7 @@ exports.updateProduct = async (req, res) => {
 
     await productModel
       .findOneAndUpdate(
-        { _id: req.params.productid },
+        { _id: req.params.productId },
         { name, description, price }
       )
       .then(res.status(201).send("Data Updated successful In Product"));
@@ -40,7 +40,7 @@ exports.updateProduct = async (req, res) => {
 // To delete Product
 exports.deleteProduct = async (req, res) => {
   try {
-    await productModel.findByIdAndDelete(req.params.productid);
+    await productModel.findByIdAndDelete(req.params.productId);
     res.status(200).send("data deleted successfully");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful");
