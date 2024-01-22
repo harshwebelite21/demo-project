@@ -18,3 +18,8 @@ exports.verifyJwtToken = (cookieToken) => {
     return res.status(401).json({ err: "Invalid JWT token." });
   }
 };
+
+exports.decodeJwtToken = (cookieToken) => {
+  const { userId } = jwt.decode(cookieToken, appConfig.jwtKey);
+  return userId;
+};

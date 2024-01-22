@@ -5,6 +5,7 @@ exports.isAuthenticated = (req, res, next) => {
   try {
     const headerToken = req.header("Authorization").replace("Bearer ", "");
     const cookieToken = req.cookies.jwtToken;
+    req.userId = jsonWebToken.decodeJwtToken(cookieToken);
     if (!cookieToken || !headerToken) {
       return res
         .status(403)
