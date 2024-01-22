@@ -26,7 +26,6 @@ exports.viewuser = async (req, res) => {
 exports.updatedata = async (req, res) => {
   try {
     const { name, email, birthdate, age, password } = req.body;
-
     await userModel.findOneAndUpdate(
       { _id: req.userId },
       { name, email, birthdate, age, password }
@@ -40,7 +39,7 @@ exports.updatedata = async (req, res) => {
 //  Delete data
 exports.deletedata = async (req, res) => {
   try {
-    await userModel.findByIdAndDelete({userId:req.userId});
+    await userModel.findByIdAndDelete(req.userId);
     res.status(200).send("data deleted successfully");
   } catch (err) {
     res.status(400).send(err.message + "Data Deletion Unsuccessful");

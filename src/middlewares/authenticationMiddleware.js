@@ -5,8 +5,9 @@ exports.isAuthenticated = (req, res, next) => {
   try {
     const headerToken = req.header("Authorization").replace("Bearer ", "");
     const cookieToken = req.cookies.jwtToken;
-    req.userId = jsonWebToken.decodeJwtToken(cookieToken);
-    if (!cookieToken || !headerToken) {
+    const token = cookieToken || headerToken;
+    req.userId = jsonWebToken.decodeJwtToken(token);
+    if (!token) {
       return res
         .status(403)
         .json({ error: "Access denied. Token not provided." });

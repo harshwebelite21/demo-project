@@ -31,7 +31,7 @@ exports.updateProduct = async (req, res) => {
         { _id: req.params.productId },
         { name, description, price }
       )
-      .then(res.status(201).send("Data Updated successful In Product"));
+      res.status(201).send("Data Updated successful In Product");
   } catch (err) {
     res.status(400).send(err.message + "Error in data Updating In Product");
   }
