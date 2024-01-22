@@ -1,15 +1,19 @@
+const jwt = require("jsonwebtoken");
 const cartModel = require("../models/cart");
 const productModel = require("../models/product");
 const orderModel = require("../models/order");
+const appConfig = require("../config/appConfig");
 
 // Create a Order
 exports.checkOut = async (req, res) => {
+  const { userId } = jwt.decode(req.cookies.jwtToken, appConfig.jwtKey);
+
   try {
     // Find the Cart products Of the specific user
     const cartProducts = await cartModel
       .findOne(
         {
-          userId: req.params.userId,
+          userId: userId,
         },
         { products: 1, _id: 0 }
       )
@@ -37,13 +41,13 @@ exports.checkOut = async (req, res) => {
 
     // Creating record in order table for history
     await orderModel.create({
-      userId: req.params.userId,
+      userId: userId,
       products: cartProducts.products,
       amount: totalBill,
     });
 
     // To Delete cart from the Cart collection After saving History in Order Table
-    await cartModel.deleteOne({ userId: req.params.userId });
+    await cartModel.deleteOne({ userId: userId });
     res.status(201).send("Order Placed Successfully");
   } catch (err) {
     res.status(400).send(" Error in Checkout Process :" + err.message);
@@ -53,9 +57,8 @@ exports.checkOut = async (req, res) => {
 // View the user data from Order
 exports.getOrderHistory = async (req, res) => {
   try {
-    const orderData = await orderModel
-      .findOne({ userId: req.params.userId })
-      .lean();
+    const { userId } = jwt.decode(req.cookies.jwtToken, appConfig.jwtKey);
+    const orderData = await orderModel.findOne({ userId: userId }).lean();
     res.status(200).send(orderData);
   } catch (err) {
     res.send(err.message + "Fetching data ").status(400);
