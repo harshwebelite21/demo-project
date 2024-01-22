@@ -7,7 +7,7 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, age, birthdate, password } = req.body;
     await userModel.create({ name, email, birthdate, age, password });
-    res.status(201).send("Data Added sucessfully");
+    res.status(201).send("Data Added successfully");
   } catch (err) {
     res.status(400).send(" Error in data Creation :" + err.message);
   }
@@ -32,9 +32,9 @@ exports.updatedata = async (req, res) => {
         { _id: req.params.userId },
         { name, email, birthdate, age, password }
       )
-      .then(res.status(201).send("Data Updated sucessful"));
+      res.status(201).send("Data Updated successful");
   } catch (err) {
-    res.status(400).send(err.message + "Error in data Updation");
+    res.status(400).send(err.message + "Error in data Updating");
   }
 };
 
@@ -43,13 +43,13 @@ exports.deletedata = async (req, res) => {
   const userId = req.params.userId;
   try {
     await userModel.findByIdAndDelete(userId);
-    res.status(200).send("data deleted sucessfully");
+    res.status(200).send("data deleted successfully");
   } catch (err) {
-    res.status(400).send(err.message + "Data Deletion Unsucessufl");
+    res.status(400).send(err.message + "Data Deletion Unsuccessful");
   }
 };
 
-// Login cheak
+// Login check
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -91,5 +91,5 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-  res.status(200).clearCookie("jwtToken").send("Logout Sucessful");
+  res.status(200).clearCookie("jwtToken").send("Logout Successful");
 };

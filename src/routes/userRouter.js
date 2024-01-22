@@ -16,7 +16,7 @@ route.post("/signup", userController.signup);
 route.put("/:userId", isAuthenticated, userController.updatedata);
 // Delete User Data
 route.delete("/:userId", isAuthenticated, userController.deletedata);
-// View Perticular user
+// View Particular user
 route.get("/:userId", isAuthenticated, userController.viewuser);
 
 module.exports = route;

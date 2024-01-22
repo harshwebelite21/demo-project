@@ -5,7 +5,7 @@ const route = express.Router();
 
 // Checkout
 route.post("/:userId", orderController.checkOut);
-// View Order Histroy using user Specific userId
+// View Order History using user Specific userId
 route.get("/:userId", orderController.getOrderHistory);
 
 module.exports = route;

@@ -15,7 +15,7 @@ exports.checkOut = async (req, res) => {
       )
       .lean();
 
-    // Maping the the product Id from cart Products
+    // Mapping the the product Id from cart Products
     const allProductId = cartProducts.products.map(
       (product) => product.productId
     );
@@ -44,7 +44,7 @@ exports.checkOut = async (req, res) => {
 
     // To Delete cart from the Cart collection After saving History in Order Table
     await cartModel.deleteOne({ userId: req.params.userId });
-    res.status(201).send("Order Placed Succesfully");
+    res.status(201).send("Order Placed Successfully");
   } catch (err) {
     res.status(400).send(" Error in Checkout Process :" + err.message);
   }
