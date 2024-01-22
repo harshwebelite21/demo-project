@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const cartModel = require("../models/cart");
-const product = require("../models/product");
 
 // Create a cart
 exports.addToCart = async (req, res) => {
@@ -22,26 +21,11 @@ exports.addToCart = async (req, res) => {
       const promises = products.map(async (element) => {
         if (allProductIdAvilableInCart.includes(element.productId)) {
           await cartModel.findOneAndUpdate(
-            {
-              userId,
-              "products.productId": new mongoose.Types.ObjectId(
-                element.productId
-              ),
-            },
+            { userId, "products.productId": element.productId },
             { $inc: { "products.$.quantity": element.quantity } }
           );
         } else {
-          await cartModel.updateOne(
-            { userId },
-            {
-              $push: {
-                products: {
-                  productId: new mongoose.Types.ObjectId(element.productId),
-                  quantity: element.quantity,
-                },
-              },
-            }
-          );
+          await cartModel.updateOne({ userId }, { $push: { products } });
         }
       });
 
