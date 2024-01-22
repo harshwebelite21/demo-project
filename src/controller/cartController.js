@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const cartModel = require("../models/cart");
 const product = require("../models/product");
 
@@ -55,10 +56,70 @@ exports.removeFromCart = async (req, res) => {
 // View the user data from cart
 exports.findCart = async (req, res) => {
   try {
-    const cartData = await cartModel
-      .findOne({ userid: req.params.userid })
-      .populate("userid")
-      .lean();
+    const cartData = await cartModel.aggregate([
+      {
+        $match: {
+          userid: new mongoose.Types.ObjectId("65a76d78ca09b0052681193a"),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userid",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: {
+          path: "$user",
+        },
+      },
+      {
+        $unwind: {
+          path: "$products",
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productid",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: {
+          path: "$product",
+        },
+      },
+      {
+        $group: {
+          _id: "$userid",
+          user: {
+            $first: {
+              _id: "$user._id",
+              name: "$user.name",
+              birthdate: "$user.birthdate",
+              email: "$user.email",
+              age: "$user.age",
+            },
+          },
+          products: {
+            $push: {
+              productid: "$products.productid",
+              quantity: "$products.quantity",
+              product: {
+                _id: "$product._id",
+                name: "$product.name",
+                description: "$product.description",
+                price: "$product.price",
+              },
+            },
+          },
+        },
+      },
+    ]);
     console.log(cartData);
     res.status(200).send(cartData);
   } catch (err) {
