@@ -14,13 +14,13 @@ exports.addToCart = async (req, res) => {
     // If User is available then Added Products to same cart other wise create new cart
     if (availableUser) {
       // To save the all userId which is saved in user's specific cart
-      const allproductIdAvilableInCart = availableUser.products.map(
+      const allProductIdAvilableInCart = availableUser.products.map(
         ({ productId }) => productId.toString()
       );
 
       // Create promises for all changes and last they all are resolved
       const promises = products.map(async (element) => {
-        if (allproductIdAvilableInCart.includes(element.productId.toString())) {
+        if (allProductIdAvilableInCart.includes(element.productId)) {
           await cartModel.findOneAndUpdate(
             {
               userId,
@@ -72,6 +72,7 @@ exports.removeFromCart = async (req, res) => {
 // View the user data from cart
 exports.findCart = async (req, res) => {
   try {
+    console.log(req.params.userId);
     const cartData = await cartModel.aggregate([
       {
         $match: {
@@ -86,16 +87,6 @@ exports.findCart = async (req, res) => {
           as: "user",
         },
       },
-      // {
-      //   $unwind: {
-      //     path: "$user",
-      //   },
-      // },
-      // {
-      //   $unwind: {
-      //     path: "$products",
-      //   },
-      // },
       {
         $lookup: {
           from: "products",
@@ -104,37 +95,6 @@ exports.findCart = async (req, res) => {
           as: "product",
         },
       },
-      // {
-      //   $unwind: {
-      //     path: "$product",
-      //   },
-      // },
-      // {
-      //   $group: {
-      //     _id: "$userId",
-      //     user: {
-      //       $first: {
-      //         _id: "$user._id",
-      //         name: "$user.name",
-      //         birthdate: "$user.birthdate",
-      //         email: "$user.email",
-      //         age: "$user.age",
-      //       },
-      //     },
-      //     products: {
-      //       $push: {
-      //         productId: "$products.productId",
-      //         quantity: "$products.quantity",
-      //         product: {
-      //           _id: "$product._id",
-      //           name: "$product.name",
-      //           description: "$product.description",
-      //           price: "$product.price",
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
     ]);
     console.log(cartData);
     res.status(200).send(cartData);
